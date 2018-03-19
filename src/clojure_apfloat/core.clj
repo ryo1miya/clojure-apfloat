@@ -1,6 +1,6 @@
 (ns clojure_apfloat.core
-  "fix me."
-  (:refer-clojure :exclude [float float? int ratio? rational?])
+  "Copyright © 2017 MIYAZAKI Ryoichi"
+  (:refer-clojure :exclude [float float? int int? ratio? rational?])
   (:import
    (org.apfloat Apfloat ApfloatMath Apcomplex Apint Aprational)))
 

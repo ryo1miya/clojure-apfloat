@@ -1,9 +1,8 @@
 (ns clojure_apfloat.rational
-  "fix me."
+  "Copyright © 2017 MIYAZAKI Ryoichi"
   (:refer-clojure :exclude [* - + / seq vec vector seq? vector? == < <= > >= not= = min max])
-  (:require
-   [clojure_apfloat.core :as ap]
-   [clojure_apfloat.util :refer :all])
+  (:require [clojure_apfloat.core :as ap]
+            [clojure_apfloat.util :refer [loop-compare]])
   (:import
    (org.apfloat Apfloat Aprational AprationalMath Apint)))
 
@@ -47,6 +46,13 @@
   ([^Aprational x ^Aprational y & more] {:pre [(seq? more)]}
    (every? #(= x %) (into [y] more))))
 
+(defn not=
+  "not= for Aprational instances."
+  ([^Aprational x] false)
+  ([^Aprational x ^Aprational y] (not (= x y)))
+  ([^Aprational x ^Aprational y & more] {:pre [(seq? more)]}
+   (not (apply = (into [x y] more)))))
+
 (defn >
   "> for Aprational instances."
   ([^Aprational x] true)
@@ -60,13 +66,6 @@
   ([^Aprational x ^Aprational y] (or (= x y) (> x y)))
   ([^Aprational x ^Aprational y & more] {:pre [(seq? more)]}
    (loop-compare >= x y more)))
-
-(defn not=
-  "not= for Aprational instances."
-  ([^Aprational x] false)
-  ([^Aprational x ^Aprational y] (not (= x y)))
-  ([^Aprational x ^Aprational y & more] {:pre [(seq? more)]}
-   (not (apply = (into [x y] more)))))
 
 (defn <
   "< for Aprational instances."
@@ -83,14 +82,14 @@
    (loop-compare <= x y more)))
 
 (defn ^Aprational min
-  "Returns the minimum value of (Aprational) arguments."
+  "Returns the minimum value of Aprational arguments."
   ([^Aprational x] x)
   ([^Aprational x ^Aprational y] (if (< x y) x y))
   ([^Aprational x ^Aprational y & more] {:pre [(seq? more)]}
    (reduce min (into [x y] more))))
 
 (defn ^Aprational max
-  "Returns the maximum value of (Aprational) arguments."
+  "Returns the maximum value of Aprational arguments."
   ([^Aprational x] x)
   ([^Aprational x ^Aprational y] (if (> x y) x y))
   ([^Aprational x ^Aprational y & more] {:pre [(seq? more)]}
@@ -116,7 +115,7 @@
 
 (defn ^Aprational /
   "/ for Aprational instances."
-  ([^Aprational x] (.divide (ap/rational 1.0M) x))
+  ([^Aprational x] (.divide (ap/rational 1) x))
   ([^Aprational x ^Aprational y] (.divide x y))
   ([^Aprational x ^Aprational y & more] {:pre [(seq? more)]} (reduce / (into [x y] more))))
 

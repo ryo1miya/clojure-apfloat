@@ -1,4 +1,5 @@
-(ns clojure_apfloat.util)
+(ns clojure_apfloat.util
+    "Copyright © 2017 MIYAZAKI Ryoichi")
 
 (defn range1 [n]
   "Same as (range 1 (inc n))"

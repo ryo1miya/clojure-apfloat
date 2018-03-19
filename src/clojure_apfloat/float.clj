@@ -1,9 +1,8 @@
 (ns clojure_apfloat.float
-  "fix me."
+  "Copyright © 2017 MIYAZAKI Ryoichi"
   (:refer-clojure :exclude [* - + / seq vec vector seq? vector? == < <= > >= not= = min max])
-  (:require
-   [clojure_apfloat.core :as ap]
-   [clojure_apfloat.util :refer :all])
+  (:require [clojure_apfloat.core :as ap]
+            [clojure_apfloat.util :refer [loop-compare]])
   (:import
    (org.apfloat Apfloat ApfloatMath)))
 
@@ -49,6 +48,13 @@
   ([^Apfloat x ^Apfloat y & more] {:pre [(seq? more)]}
    (every? #(= x %) (into [y] more))))
 
+(defn not=
+  "not= for Apfloat instances."
+  ([^Apfloat x] false)
+  ([^Apfloat x ^Apfloat y] (not (= x y)))
+  ([^Apfloat x ^Apfloat y & more] {:pre [(seq? more)]}
+   (not (apply = (into [x y] more)))))
+
 (defn >
   "> for Apfloat instances."
   ([^Apfloat x] true)
@@ -62,13 +68,6 @@
   ([^Apfloat x ^Apfloat y] (or (= x y) (> x y)))
   ([^Apfloat x ^Apfloat y & more] {:pre [(seq? more)]}
    (loop-compare >= x y more)))
-
-(defn not=
-  "not= for Apfloat instances."
-  ([^Apfloat x] false)
-  ([^Apfloat x ^Apfloat y] (not (= x y)))
-  ([^Apfloat x ^Apfloat y & more] {:pre [(seq? more)]}
-   (not (apply = (into [x y] more)))))
 
 (defn <
   "< for Apfloat instances."
@@ -85,14 +84,14 @@
    (loop-compare <= x y more)))
 
 (defn ^Apfloat min
-  "Returns the minimum value of (Apfloat) arguments."
+  "Returns the minimum value of Apfloat arguments."
   ([^Apfloat x] x)
   ([^Apfloat x ^Apfloat y] (if (< x y) x y))
   ([^Apfloat x ^Apfloat y & more] {:pre [(seq? more)]}
    (reduce min (into [x y] more))))
 
 (defn ^Apfloat max
-  "Returns the maximum value of (Apfloat) arguments."
+  "Returns the maximum value of Apfloat arguments."
   ([^Apfloat x] x)
   ([^Apfloat x ^Apfloat y] (if (> x y) x y))
   ([^Apfloat x ^Apfloat y & more] {:pre [(seq? more)]}

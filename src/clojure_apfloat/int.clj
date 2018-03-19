@@ -1,9 +1,8 @@
 (ns clojure_apfloat.int
-  "fix me."
+  "Copyright © 2017 MIYAZAKI Ryoichi"
   (:refer-clojure :exclude [* - + / seq vec vector seq? vector? == < <= > >= not= = min max])
-  (:require
-   [clojure_apfloat.core :as ap]
-   [clojure_apfloat.util :refer :all])
+  (:require [clojure_apfloat.core :as ap]
+            [clojure_apfloat.util :refer [loop-compare]])
   (:import
    (org.apfloat Apfloat Aprational Apint ApintMath)))
 
@@ -47,6 +46,13 @@
   ([^Apint x ^Apint y & more] {:pre [(seq? more)]}
    (every? #(= x %) (into [y] more))))
 
+(defn not=
+  "not= for Apint instances."
+  ([^Apint x] false)
+  ([^Apint x ^Apint y] (not (= x y)))
+  ([^Apint x ^Apint y & more] {:pre [(seq? more)]}
+   (not (apply = (into [x y] more)))))
+
 (defn >
   "> for Apint instances."
   ([^Apint x] true)
@@ -60,13 +66,6 @@
   ([^Apint x ^Apint y] (or (= x y) (> x y)))
   ([^Apint x ^Apint y & more] {:pre [(seq? more)]}
    (loop-compare >= x y more)))
-
-(defn not=
-  "not= for Apint instances."
-  ([^Apint x] false)
-  ([^Apint x ^Apint y] (not (= x y)))
-  ([^Apint x ^Apint y & more] {:pre [(seq? more)]}
-   (not (apply = (into [x y] more)))))
 
 (defn <
   "< for Apint instances."
@@ -83,14 +82,14 @@
    (loop-compare <= x y more)))
 
 (defn ^Apint min
-  "Returns the minimum value of (Apint) arguments."
+  "Returns the minimum value of Apint arguments."
   ([^Apint x] x)
   ([^Apint x ^Apint y] (if (< x y) x y))
   ([^Apint x ^Apint y & more] {:pre [(seq? more)]}
    (reduce min (into [x y] more))))
 
 (defn ^Apint max
-  "Returns the maximum value of (Apint) arguments."
+  "Returns the maximum value of Apint arguments."
   ([^Apint x] x)
   ([^Apint x ^Apint y] (if (> x y) x y))
   ([^Apint x ^Apint y & more] {:pre [(seq? more)]}
@@ -116,7 +115,7 @@
 
 (defn ^Apint /
   "/ for Apint instances."
-  ([^Apint x] (.divide (ap/int 1.0M) x))
+  ([^Apint x] (.divide (ap/int 1) x))
   ([^Apint x ^Apint y] (.divide x y))
   ([^Apint x ^Apint y & more] {:pre [(seq? more)]} (reduce / (into [x y] more))))
 
